@@ -1,33 +1,34 @@
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
-import {
-  View,
-  Text,
-  Modal,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { UrduText } from '../../../../components/ui/UrduText';
-import { Button } from '../../../../components/ui/Button';
-import { Colors, Spacing, Radius, FontSize } from '../../../../constants/theme';
-import { meaningService } from '../../../../services/meaning.service';
-import { dictionaryService } from '../../../../services/dictionary.service';
-import { useDictionaryStore } from '../../../../store/dictionary.store';
-import { useAuthStore } from '../../../../store/auth.store';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Colors, FontSize, Radius, Spacing } from '../constants/theme';
+import { dictionaryService } from '../services/dictionary.service';
+import { meaningService } from '../services/meaning.service';
+import { useAuthStore } from '../store/auth.store';
+import { useDictionaryStore } from '../store/dictionary.store';
+import { Button } from './ui/Button';
+import { UrduText } from './ui/UrduText';
 
 interface Props {
   visible: boolean;
   selectedText: string;
-  localPdfPath: string; // kept for future context enrichment; not sent to backend yet
+  context: string;
+  localPdfPath: string;
   page: number;
   onClose: () => void;
 }
 
-export function MeaningDrawer({ visible, selectedText, localPdfPath, page, onClose }: Props) {
+export default function MeaningDrawer({ visible, selectedText, context, localPdfPath, page, onClose }: Props) {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
   const { addEntry } = useDictionaryStore();
@@ -39,7 +40,6 @@ export function MeaningDrawer({ visible, selectedText, localPdfPath, page, onClo
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
-  // Fetch meaning when drawer opens with selected text
   React.useEffect(() => {
     if (!visible || !selectedText) return;
     setMeaning('');
@@ -52,7 +52,7 @@ export function MeaningDrawer({ visible, selectedText, localPdfPath, page, onClo
       .getMeaning({
         page,
         selected_text: selectedText,
-        context: selectedText, // context will be enriched once SelectionOverlay is complete
+        context,  
         selection_type: 'word',
       })
       .then((res) => {

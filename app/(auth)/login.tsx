@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 56,
-    lineHeight: 80,
+    lineHeight: 150,
     color: Colors.primary,
   },
   tagline: {

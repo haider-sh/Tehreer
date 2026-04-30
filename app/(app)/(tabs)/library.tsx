@@ -12,10 +12,10 @@ import {
 import { useRouter } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeScreen } from '../../components/layout/SafeScreen';
-import { Card } from '../../components/ui/Card';
-import { Colors, Spacing, FontSize, Radius } from '../../constants/theme';
-import { localPdfService, LocalPdf } from '../../services/local-pdf.service';
+import { SafeScreen } from '../../../components/layout/SafeScreen';
+import { Card } from '../../../components/ui/Card';
+import { Colors, Spacing, FontSize, Radius } from '../../../constants/theme';
+import { localPdfService, LocalPdf } from '../../../services/local-pdf.service';
 
 export default function LibraryScreen() {
   const router = useRouter();
@@ -102,7 +102,6 @@ export default function LibraryScreen() {
 
   return (
     <SafeScreen>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Library</Text>
         <TouchableOpacity style={styles.addBtn} onPress={handleAdd} disabled={adding}>
@@ -114,7 +113,6 @@ export default function LibraryScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Hint */}
       <View style={styles.hintRow}>
         <Ionicons name="information-circle-outline" size={14} color={Colors.textMuted} />
         <Text style={styles.hintText}>PDFs are stored on your device. Long-press to remove.</Text>
@@ -164,21 +162,15 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: FontSize.xl, fontWeight: '700', color: Colors.textPrimary },
   addBtn: {
-    width: 38,
-    height: 38,
+    width: 38, height: 38,
     borderRadius: Radius.full,
     backgroundColor: Colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center', justifyContent: 'center',
   },
   hintRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    flexDirection: 'row', alignItems: 'center', gap: Spacing.xs,
+    paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm,
+    borderBottomWidth: 1, borderBottomColor: Colors.border,
     backgroundColor: Colors.surfaceAlt,
   },
   hintText: { fontSize: FontSize.xs, color: Colors.textMuted },
@@ -186,24 +178,14 @@ const styles = StyleSheet.create({
   emptyList: { flex: 1 },
   docCard: { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, gap: Spacing.md },
   docIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.sm,
-    backgroundColor: Colors.accentLight,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 44, height: 44, borderRadius: Radius.sm,
+    backgroundColor: Colors.accentLight, alignItems: 'center', justifyContent: 'center',
   },
   docInfo: { flex: 1 },
   docName: { fontSize: FontSize.md, fontWeight: '600', color: Colors.textPrimary, marginBottom: 2 },
   docMeta: { fontSize: FontSize.xs, color: Colors.textSecondary },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-    paddingTop: Spacing.xxl,
-  },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingTop: Spacing.xxl },
   emptyTitle: { fontSize: FontSize.lg, fontWeight: '600', color: Colors.textSecondary },
   emptySubtitle: { fontSize: FontSize.sm, color: Colors.textMuted, textAlign: 'center' },
 });

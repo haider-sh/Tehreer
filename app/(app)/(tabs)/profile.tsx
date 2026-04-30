@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeScreen } from '../../components/layout/SafeScreen';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Colors, Spacing, FontSize, Radius } from '../../constants/theme';
-import { useAuthStore } from '../../store/auth.store';
+import { SafeScreen } from '../../../components/layout/SafeScreen';
+import { Card } from '../../../components/ui/Card';
+import { Button } from '../../../components/ui/Button';
+import { Colors, Spacing, FontSize, Radius } from '../../../constants/theme';
+import { useAuthStore } from '../../../store/auth.store';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -19,7 +19,6 @@ export default function ProfileScreen() {
     ]);
   };
 
-  // ── Not signed in ─────────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
       <SafeScreen>
@@ -34,23 +33,13 @@ export default function ProfileScreen() {
           <Text style={styles.promptSub}>
             Sign in to save words to your dictionary and sync across devices.
           </Text>
-          <Button
-            label="Sign In"
-            onPress={() => router.push('/(auth)/login')}
-            style={styles.actionBtn}
-          />
-          <Button
-            label="Create Account"
-            onPress={() => router.push('/(auth)/register')}
-            variant="secondary"
-            style={styles.actionBtn}
-          />
+          <Button label="Sign In" onPress={() => router.push('/(auth)/login')} style={styles.actionBtn} />
+          <Button label="Create Account" onPress={() => router.push('/(auth)/register')} variant="secondary" style={styles.actionBtn} />
         </View>
       </SafeScreen>
     );
   }
 
-  // ── Signed in ──────────────────────────────────────────────────────
   const initials = user?.username ? user.username.slice(0, 2).toUpperCase() : '??';
 
   return (
@@ -58,7 +47,6 @@ export default function ProfileScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Profile</Text>
       </View>
-
       <View style={styles.avatarSection}>
         <View style={styles.avatarFilled}>
           <Text style={styles.avatarText}>{initials}</Text>
@@ -66,7 +54,6 @@ export default function ProfileScreen() {
         <Text style={styles.username}>{user?.username}</Text>
         <Text style={styles.email}>{user?.email}</Text>
       </View>
-
       <View style={styles.section}>
         <Card>
           <View style={styles.infoRow}>
@@ -75,7 +62,6 @@ export default function ProfileScreen() {
           </View>
         </Card>
       </View>
-
       <View style={styles.section}>
         <Button label="Log Out" onPress={handleLogout} variant="secondary" />
       </View>
@@ -84,50 +70,21 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
+  header: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderBottomWidth: 1, borderBottomColor: Colors.border },
   title: { fontSize: FontSize.xl, fontWeight: '700', color: Colors.textPrimary },
-  // Not signed in
-  signInPrompt: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: Spacing.xl,
-    gap: Spacing.md,
-  },
+  signInPrompt: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.xl, gap: Spacing.md },
   avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceAlt,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.sm,
+    width: 72, height: 72, borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceAlt, borderWidth: 1, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.sm,
   },
   promptTitle: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.textPrimary },
-  promptSub: {
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
+  promptSub: { fontSize: FontSize.sm, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
   actionBtn: { width: '100%' },
-  // Signed in
   avatarSection: { alignItems: 'center', paddingVertical: Spacing.xxl, gap: Spacing.sm },
   avatarFilled: {
-    width: 72,
-    height: 72,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.sm,
+    width: 72, height: 72, borderRadius: Radius.full,
+    backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.sm,
   },
   avatarText: { fontSize: FontSize.xl, fontWeight: '700', color: Colors.white },
   username: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.textPrimary },

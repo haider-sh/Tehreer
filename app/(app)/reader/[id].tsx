@@ -1,19 +1,21 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Spacing, FontSize } from '../../../constants/theme';
+import MeaningDrawer from '../../../components/MeaningDrawer';
+import { PdfViewer } from '../../../components/PdfViewer';
+import SummaryModal from '../../../components/SummaryModal';
+import { Colors, FontSize, Spacing } from '../../../constants/theme';
+import { LocalPdf, localPdfService } from '../../../services/local-pdf.service';
 import { useReaderStore } from '../../../store/reader.store';
-import { localPdfService, LocalPdf } from '../../../services/local-pdf.service';
-import { MeaningDrawer } from './components/MeaningDrawer';
-import { SummaryModal } from './components/SummaryModal';
 
 export default function ReaderScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,9 +24,12 @@ export default function ReaderScreen() {
 
   const [pdfMeta, setPdfMeta] = useState<LocalPdf | null>(null);
   const [loading, setLoading] = useState(true);
+  const [pdfError, setPdfError] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [meaningVisible, setMeaningVisible] = useState(false);
   const [selectedText, setSelectedText] = useState('');
+  const [pageContext, setPageContext] = useState('');
+  const [jumpToPage, setJumpToPage] = useState(1);
 
   useEffect(() => {
     if (!id) return;
@@ -38,32 +43,12 @@ export default function ReaderScreen() {
     return () => reset();
   }, [id]);
 
-  // Called by PdfViewer (once native build is active) to update page count
   const handleLoadComplete = (pages: number) => {
     setDoc(id as string, pages);
     localPdfService.updatePageCount(id as string, pages);
   };
 
-  // Placeholder: PDF rendering requires a custom dev build (react-native-pdf).
-  // PdfViewer will use pdfMeta.localPath as its source URI.
-  // Run: npx expo run:android  (or npx expo run:ios)
-  const renderPdfArea = () => (
-    <View style={styles.pdfPlaceholder}>
-      <Ionicons name="document-text-outline" size={56} color={Colors.textMuted} />
-      <Text style={styles.placeholderTitle}>PDF Viewer</Text>
-      <Text style={styles.placeholderSub}>
-        Native rendering requires a custom dev build.
-      </Text>
-      <Text style={styles.placeholderSub}>
-        Run: <Text style={styles.code}>npx expo run:android</Text>
-      </Text>
-      {pdfMeta && (
-        <Text style={styles.placeholderFile} numberOfLines={1}>
-          {pdfMeta.name}
-        </Text>
-      )}
-    </View>
-  );
+
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
@@ -94,15 +79,30 @@ export default function ReaderScreen() {
         <View style={styles.center}>
           <ActivityIndicator color={Colors.accent} />
         </View>
-      ) : (
-        renderPdfArea()
-      )}
+      ) : pdfError ? (
+        <View style={styles.center}>
+          <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
+          <Text style={styles.errorText}>Could not load PDF</Text>
+        </View>
+      ) : pdfMeta ? (
+        <PdfViewer
+          uri={pdfMeta.localPath}
+          page={jumpToPage}
+          onLoadComplete={handleLoadComplete}
+          onPageChanged={(p) => setPage(p)}
+          onError={() => setPdfError(true)}
+        />
+      ) : null}
 
       {/* Page Navigation */}
       <View style={styles.navBar}>
         <TouchableOpacity
           style={[styles.navBtn, currentPage <= 1 && styles.navBtnDisabled]}
-          onPress={() => setPage(Math.max(1, currentPage - 1))}
+          onPress={() => {
+            const prev = Math.max(1, currentPage - 1);
+            setPage(prev);
+            setJumpToPage(prev);
+          }}
           disabled={currentPage <= 1}
         >
           <Ionicons
@@ -116,7 +116,11 @@ export default function ReaderScreen() {
 
         <TouchableOpacity
           style={[styles.navBtn, (currentPage >= totalPages || totalPages === 0) && styles.navBtnDisabled]}
-          onPress={() => setPage(currentPage + 1)}
+          onPress={() => {
+            const next = currentPage + 1;
+            setPage(next);
+            setJumpToPage(next);
+          }}
           disabled={currentPage >= totalPages || totalPages === 0}
         >
           <Ionicons
@@ -131,11 +135,13 @@ export default function ReaderScreen() {
       <MeaningDrawer
         visible={meaningVisible}
         selectedText={selectedText}
+        context={pageContext || selectedText}  // real context from SelectionOverlay (Phase 2)
         localPdfPath={pdfMeta?.localPath ?? ''}
         page={currentPage}
         onClose={() => {
           setMeaningVisible(false);
           setSelectedText('');
+          setPageContext('');
         }}
       />
 
@@ -178,28 +184,8 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   pageText: { fontSize: FontSize.xs, color: Colors.textSecondary },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  pdfPlaceholder: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.md,
-    padding: Spacing.xl,
-  },
-  placeholderTitle: { fontSize: FontSize.xl, fontWeight: '700', color: Colors.textSecondary },
-  placeholderSub: {
-    fontSize: FontSize.sm,
-    color: Colors.textMuted,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  placeholderFile: {
-    fontSize: FontSize.xs,
-    color: Colors.accent,
-    marginTop: Spacing.sm,
-    maxWidth: '90%',
-  },
-  code: { fontFamily: 'monospace', color: Colors.accent },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
+  errorText: { fontSize: FontSize.md, color: Colors.error, fontWeight: '500' },
   navBar: {
     flexDirection: 'row',
     alignItems: 'center',

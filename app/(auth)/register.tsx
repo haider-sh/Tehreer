@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xxl,
   },
   hero: { alignItems: 'center', marginBottom: Spacing.xxl },
-  appName: { fontSize: 56, lineHeight: 80, color: Colors.primary },
+  appName: { fontSize: 56, lineHeight: 150, color: Colors.primary },
   tagline: { fontSize: FontSize.sm, color: Colors.textSecondary, marginTop: Spacing.xs },
   form: { gap: Spacing.sm },
   label: {

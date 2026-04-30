@@ -11,14 +11,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeScreen } from '../../components/layout/SafeScreen';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { UrduText } from '../../components/ui/UrduText';
-import { Colors, Spacing, FontSize, Radius } from '../../constants/theme';
-import { dictionaryService } from '../../services/dictionary.service';
-import { useDictionaryStore, DictionaryEntry } from '../../store/dictionary.store';
-import { useAuthStore } from '../../store/auth.store';
+import { SafeScreen } from '../../../components/layout/SafeScreen';
+import { Card } from '../../../components/ui/Card';
+import { Button } from '../../../components/ui/Button';
+import { UrduText } from '../../../components/ui/UrduText';
+import { Colors, Spacing, FontSize, Radius } from '../../../constants/theme';
+import { dictionaryService } from '../../../services/dictionary.service';
+import { useDictionaryStore, DictionaryEntry } from '../../../store/dictionary.store';
+import { useAuthStore } from '../../../store/auth.store';
 
 export default function DictionaryScreen() {
   const router = useRouter();
@@ -54,7 +54,6 @@ export default function DictionaryScreen() {
     (e) => e.word.includes(search) || e.meaning.includes(search)
   );
 
-  // Not logged in — show a simple sign-in prompt, not a wall
   if (!isAuthenticated) {
     return (
       <SafeScreen>
@@ -67,11 +66,7 @@ export default function DictionaryScreen() {
           <Text style={styles.promptSub}>
             Sign in to save words and build your vocabulary as you read.
           </Text>
-          <Button
-            label="Sign In"
-            onPress={() => router.push('/(auth)/login')}
-            style={styles.signInBtn}
-          />
+          <Button label="Sign In" onPress={() => router.push('/(auth)/login')} style={styles.signInBtn} />
           <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
             <Text style={styles.registerLink}>
               Don't have an account? <Text style={styles.registerLinkAccent}>Register</Text>
@@ -138,37 +133,22 @@ export default function DictionaryScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md,
+    borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   title: { fontSize: FontSize.xl, fontWeight: '700', color: Colors.textPrimary },
   count: { fontSize: FontSize.sm, color: Colors.textMuted },
-  signInPrompt: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: Spacing.xl,
-    gap: Spacing.md,
-  },
+  signInPrompt: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.xl, gap: Spacing.md },
   promptTitle: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
   promptSub: { fontSize: FontSize.sm, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
   signInBtn: { width: '100%', marginTop: Spacing.sm },
   registerLink: { fontSize: FontSize.sm, color: Colors.textSecondary },
   registerLinkAccent: { color: Colors.accent, fontWeight: '600' },
   searchWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    margin: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: Spacing.md,
+    flexDirection: 'row', alignItems: 'center', margin: Spacing.lg,
+    backgroundColor: Colors.surface, borderRadius: Radius.md,
+    borderWidth: 1, borderColor: Colors.border, paddingHorizontal: Spacing.md,
   },
   searchIcon: { marginRight: Spacing.sm },
   searchInput: { flex: 1, height: 42, fontSize: FontSize.md, color: Colors.textPrimary },
@@ -180,13 +160,7 @@ const styles = StyleSheet.create({
   date: { fontSize: FontSize.xs, color: Colors.textMuted, marginTop: 4 },
   deleteBtn: { padding: Spacing.sm },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-    paddingTop: Spacing.xxl,
-  },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingTop: Spacing.xxl },
   emptyTitle: { fontSize: FontSize.lg, fontWeight: '600', color: Colors.textSecondary },
   emptySubtitle: { fontSize: FontSize.sm, color: Colors.textMuted, textAlign: 'center' },
 });

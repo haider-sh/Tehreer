@@ -1,19 +1,19 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
   ActivityIndicator,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { UrduText } from '../../../../components/ui/UrduText';
-import { Button } from '../../../../components/ui/Button';
-import { Colors, Spacing, Radius, FontSize } from '../../../../constants/theme';
-import { meaningService } from '../../../../services/meaning.service';
+import { Colors, FontSize, Radius, Spacing } from '../constants/theme';
+import { meaningService } from '../services/meaning.service';
+import { Button } from './ui/Button';
+import { UrduText } from './ui/UrduText';
 
 interface Props {
   visible: boolean;
@@ -22,7 +22,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function SummaryModal({ visible, localPdfPath, totalPages, onClose }: Props) {
+export default function SummaryModal({ visible, localPdfPath, totalPages, onClose }: Props) {
   const [toPage, setToPage] = useState('');
   const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(false);
