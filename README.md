@@ -1,50 +1,70 @@
-# Welcome to your Expo app 👋
+# تحریر (Tehreer) — An Intelligent Urdu PDF Reader
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Tehreer** (meaning *writing* or *text* in Urdu) is a premium mobile experience designed for the modern Urdu reader. It bridges the gap between traditional reading and modern AI assistance, offering a seamless, high-fidelity PDF reading environment with integrated contextual intelligence.
 
-## Get started
+## Key Features
 
-1. Install dependencies
+- **High-Fidelity Reading**: Experience PDFs with pixel-perfect clarity using a modern PDF.js-based rendering engine, optimized for mobile devices.
+- **Contextual Meaning Lookup**: Simply tap any word or select a phrase to get its precise Urdu meaning in context. No more switching between apps or dictionaries.
+- **AI-Powered Summarization**: Generate concise summaries of specific page ranges. Perfect for quickly grasping the essence of long chapters or documents.
+- **Personal Dictionary**: Save difficult words and their meanings to your own library for future reference and learning.
+- **Premium Urdu Typography**: Native support for **Noto Nastaliq Urdu**, ensuring that Urdu text looks as beautiful as it is intended to be.
+- **Optional Authentication**: Read and summarize freely as a guest. Sign in only when you want to sync your personal dictionary across devices.
 
+## Technology Stack
+
+- **Framework**: [React Native](https://reactnative.dev/) with [Expo SDK 54](https://expo.dev/)
+- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/) (File-based routing)
+- **PDF Engine**: [PDF.js](https://mozilla.github.io/pdf.js/) via `react-native-webview` for high-fidelity text layer interaction.
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Networking**: [Axios](https://axios-http.com/)
+- **Styling**: Native StyleSheet API with a custom design system.
+- **Font**: [Noto Nastaliq Urdu](https://fonts.google.com/specimen/Noto+Nastaliq+Urdu)
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS)
+- [Expo Go](https://expo.dev/go) app on your mobile device OR a configured Android/iOS emulator.
+
+### Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/haider-sh/Tehreer.git
+   cd Tehreer
+   ```
+
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-2. Start the app
+3. **Configure Environment Variables**:
+   Create a `.env` file in the root directory and add your backend API URL:
+   ```env
+   EXPO_PUBLIC_API_BASE_URL=https://your-api-endpoint.com
+   ```
 
+4. **Start the development server**:
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## 📂 Project Structure
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- `app/`: Expo Router directory containing all screens and layouts.
+- `components/`: Reusable UI components including the PDF viewer and Urdu text wrappers.
+- `services/`: API client and business logic services.
+- `store/`: Zustand stores for global state management.
+- `constants/`: Theme configuration, colors, and font constants.
+- `assets/`: Images, fonts, and other static files.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## ⚖️ License
 
-## Get a fresh project
+This project is private and intended for personal use. All rights reserved.
 
-When you're ready, run:
+---
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Developed with ❤️ for the Urdu community.

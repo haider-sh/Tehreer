@@ -82,12 +82,6 @@ export default function MeaningDrawer({ visible, selectedText, context, localPdf
     }
     setSaving(true);
     try {
-      console.log({
-        word: selectedText,
-        meaning,
-        pageNo: page.toString(),
-        bookName: localPdfPath.split('/').pop() || '',
-      });
       const entry = await dictionaryService.add({
         word: selectedText,
         meaning,
@@ -202,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: Spacing.lg,
   },
-  loadingText: { fontSize: FontSize.sm, color: Colors.textSecondary },
+  loadingText: { fontSize: FontSize.lg, color: Colors.textSecondary },
   errorText: {
     fontSize: FontSize.sm,
     color: Colors.error,

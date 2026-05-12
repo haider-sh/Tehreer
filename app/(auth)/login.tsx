@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, Radius, FontSize } from '../../constants/theme';
@@ -16,6 +17,7 @@ import { UrduText } from '../../components/ui/UrduText';
 import { Button } from '../../components/ui/Button';
 import { authService } from '../../services/auth.service';
 import { useAuthStore } from '../../store/auth.store';
+import Icon from '../../assets/images/android-icon-foreground.png';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -47,7 +49,7 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.root}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
         contentContainerStyle={styles.scroll}
@@ -59,7 +61,7 @@ export default function LoginScreen() {
           <UrduText size="xl" style={styles.appName}>
             تحریر
           </UrduText>
-          <Text style={styles.tagline}>Urdu Reading, Reimagined</Text>
+          <Image source={Icon} style={styles.logo} />
         </View>
 
         {/* Form */}
@@ -109,6 +111,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+  logo: {
+    width: 120,
+    height: 120,
+    borderRadius: Radius.md,
+  },
   scroll: {
     flexGrow: 1,
     justifyContent: 'center',
@@ -116,7 +123,9 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xxl,
   },
   hero: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.xxl,
   },
   appName: {

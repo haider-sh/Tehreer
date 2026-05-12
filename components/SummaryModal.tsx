@@ -140,12 +140,18 @@ export default function SummaryModal({ visible, localPdfPath, totalPages, onClos
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
       {/*
-        Single overlay fills the whole screen and anchors the sheet to the
-        bottom. This gives every child inside `sheet` a proper height context
-        so `flex:1` on summaryContainer actually works and the nav bar from
-        the reader screen cannot bleed through.
+        KeyboardAvoidingView MUST be the direct child of Modal so it can
+        measure its own position relative to the screen root. Nesting it inside
+        another View breaks the offset calculation on both platforms and causes
+        the keyboard to cover the input field.
+
+        It doubles as the overlay: flex:1 + justifyContent:'flex-end' anchors
+        the sheet at the bottom, and the dim background covers the reader nav bar.
       */}
-      <View style={styles.overlay}>
+      <KeyboardAvoidingView
+        style={styles.overlay}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         {/* Dimmed backdrop — tapping dismisses the modal */}
         <TouchableOpacity
           style={StyleSheet.absoluteFillObject}
@@ -153,11 +159,7 @@ export default function SummaryModal({ visible, localPdfPath, totalPages, onClos
           onPress={handleClose}
         />
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.sheetWrapper}
-        >
-          <View style={[styles.sheet, !!summary && !loading && styles.sheetExpanded]}>
+        <View style={[styles.sheet, !!summary && !loading && styles.sheetExpanded]}>
             <View style={styles.handle} />
 
             <View style={styles.header}>
@@ -222,8 +224,7 @@ export default function SummaryModal({ visible, localPdfPath, totalPages, onClos
               </View>
             )}
           </View>
-        </KeyboardAvoidingView>
-      </View>
+      </KeyboardAvoidingView>
 
       {/* Hidden extractor — 1×1 px off-screen so Android mounts the WebView process */}
       {extracting && !!extractionHtml && (
@@ -247,13 +248,8 @@ const styles = StyleSheet.create({
   // the reader's nav bar cannot bleed through the modal.
   overlay: {
     flex: 1,
-    minHeight: '100%',
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0,0,0,0.45)',
-  },
-  sheetWrapper: {
-    // KeyboardAvoidingView needs to shrink, not fill, so the sheet stays at bottom
-    justifyContent: 'flex-end',
   },
   sheet: {
     backgroundColor: Colors.surface,
@@ -307,7 +303,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xxl,
     gap: Spacing.md,
   },
-  loadingText: { fontSize: FontSize.sm, color: Colors.textSecondary },
+  loadingText: { fontSize: FontSize.lg, color: Colors.textSecondary },
   // flex:1 expands to fill the sheet height (defined by sheetExpanded)
   summaryContainer: {
     flex: 1,

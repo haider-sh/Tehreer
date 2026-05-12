@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, Radius, FontSize } from '../../constants/theme';
@@ -16,6 +17,7 @@ import { UrduText } from '../../components/ui/UrduText';
 import { Button } from '../../components/ui/Button';
 import { authService } from '../../services/auth.service';
 import { useAuthStore } from '../../store/auth.store';
+import Icon from '../../assets/images/android-icon-foreground.png';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -52,7 +54,7 @@ export default function RegisterScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.root}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
         contentContainerStyle={styles.scroll}
@@ -60,9 +62,12 @@ export default function RegisterScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
-          <UrduText size="xl" style={styles.appName}>
-            تحریر
-          </UrduText>
+          <View style={styles.heroText}>
+            <UrduText size="xl" style={styles.appName}>
+              تحریر
+            </UrduText>
+            <Image source={Icon} style={styles.logo} />
+          </View>
           <Text style={styles.tagline}>Create your account</Text>
         </View>
 
@@ -70,7 +75,7 @@ export default function RegisterScreen() {
           <Text style={styles.label}>Username</Text>
           <TextInput
             style={styles.input}
-            placeholder="your_name"
+            placeholder="Your Name"
             placeholderTextColor={Colors.textMuted}
             value={username}
             onChangeText={setUsername}
@@ -123,6 +128,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.xxl,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    borderRadius: Radius.md,
+  },
+  heroText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   hero: { alignItems: 'center', marginBottom: Spacing.xxl },
   appName: { fontSize: 56, lineHeight: 150, color: Colors.primary },
