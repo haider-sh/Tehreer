@@ -30,5 +30,5 @@ export const pdfService = {
     // Returns the URL used as the source for react-native-pdf
     const { API_BASE_URL } = require('../constants/api');
     return `${API_BASE_URL}/pdfs/${documentId}/file`;
-  },
+  }
 };

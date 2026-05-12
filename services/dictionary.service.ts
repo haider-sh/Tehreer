@@ -10,7 +10,8 @@ export const dictionaryService = {
   async add(params: {
     word: string;
     meaning: string;
-    context_sentence: string;
+    pageNo: string;
+    bookName: string;
   }): Promise<DictionaryEntry> {
     const { data } = await api.post<DictionaryEntry>('/dictionary', params);
     return data;

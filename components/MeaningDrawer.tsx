@@ -41,6 +41,7 @@ export default function MeaningDrawer({ visible, selectedText, context, localPdf
   const [error, setError] = useState('');
 
   React.useEffect(() => {
+
     if (!visible || !selectedText) return;
     setMeaning('');
     setPos('');
@@ -48,16 +49,20 @@ export default function MeaningDrawer({ visible, selectedText, context, localPdf
     setSaved(false);
     setLoading(true);
 
+    // Derive selection_type from word count — single word vs phrase/sentence
+    const wordCount = selectedText.trim().split(/\s+/).filter(Boolean).length;
+    const selectionType =
+      wordCount === 1 ? 'word' : wordCount <= 5 ? 'phrase' : 'sentence';
+
     meaningService
       .getMeaning({
         page,
         selected_text: selectedText,
-        context,  
-        selection_type: 'word',
+        context: context.replace(selectedText, `*${selectedText}*`),
+        selection_type: selectionType,
       })
       .then((res) => {
         setMeaning(res.meaning);
-        setPos(res.pos);
       })
       .catch(() => setError('معنی حاصل نہیں ہو سکا'))
       .finally(() => setLoading(false));
@@ -77,10 +82,17 @@ export default function MeaningDrawer({ visible, selectedText, context, localPdf
     }
     setSaving(true);
     try {
+      console.log({
+        word: selectedText,
+        meaning,
+        pageNo: page.toString(),
+        bookName: localPdfPath.split('/').pop() || '',
+      });
       const entry = await dictionaryService.add({
         word: selectedText,
         meaning,
-        context_sentence: selectedText,
+        pageNo: page.toString(),
+        bookName: localPdfPath.split('/').pop() || '',
       });
       addEntry(entry);
       setSaved(true);
@@ -178,7 +190,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  selectedWord: { flex: 1, color: Colors.primary },
+  selectedWord: { flex: 1, color: Colors.primary, paddingVertical: Spacing.sm },
   body: {
     padding: Spacing.lg,
     gap: Spacing.md,

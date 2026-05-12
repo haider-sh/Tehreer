@@ -39,9 +39,11 @@ export default function RegisterScreen() {
         password
       );
       await login(access_token, refresh_token, user);
+      router.replace('/(app)/(tabs)/library');
     } catch (err: any) {
       const msg = err?.response?.data?.detail ?? 'اکاؤنٹ بنانا ناکام ہوا';
       Alert.alert('خطا', msg);
+      router.replace('/(app)/(tabs)/library');
     } finally {
       setLoading(false);
     }

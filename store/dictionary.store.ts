@@ -1,10 +1,10 @@
+import { MeaningResponse } from '@/services/meaning.service';
 import { create } from 'zustand';
 
 export interface DictionaryEntry {
   id: string;
   word: string;
-  meaning: string;
-  context_sentence: string;
+  meanings: MeaningResponse[];
   created_at: string;
 }
 

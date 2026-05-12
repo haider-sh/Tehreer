@@ -51,7 +51,7 @@ export default function DictionaryScreen() {
   };
 
   const filtered = entries.filter(
-    (e) => e.word.includes(search) || e.meaning.includes(search)
+    (e) => e.word.includes(search) || e.meanings.map((m) => m.meaning).includes(search)
   );
 
   if (!isAuthenticated) {
@@ -107,7 +107,7 @@ export default function DictionaryScreen() {
             <Card style={styles.entryCard} padded={false}>
               <View style={styles.entryBody}>
                 <UrduText size="md" style={styles.word}>{item.word}</UrduText>
-                <UrduText size="sm" color={Colors.textSecondary} numberOfLines={2}>{item.meaning}</UrduText>
+                {item.meanings.map((m) => <UrduText size="sm" color={Colors.textSecondary} numberOfLines={2}>{m.meaning}</UrduText>)}
                 <Text style={styles.date}>{new Date(item.created_at).toLocaleDateString()}</Text>
               </View>
               <TouchableOpacity onPress={() => handleDelete(item)} style={styles.deleteBtn}>

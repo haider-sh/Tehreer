@@ -4,8 +4,8 @@ export type SelectionType = 'word' | 'phrase' | 'sentence' | 'paragraph';
 
 export interface MeaningResponse {
   meaning: string;
-  pos: string;
-  confidence: number;
+  pageNo: number;
+  bookName: string;
 }
 
 export interface SummaryResponse {
@@ -25,11 +25,11 @@ export const meaningService = {
   },
 
   async getSummary(params: {
-    local_pdf_path: string; // file:// URI — backend will receive the file
-    from_page: number;
-    to_page: number;
+    text: string;
   }): Promise<SummaryResponse> {
-    const { data } = await api.post<SummaryResponse>('/summary', params);
+    const { data } = await api.post<SummaryResponse>('/summary', params, {
+      timeout: 60_000,
+    });
     return data;
   },
 };

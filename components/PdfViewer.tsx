@@ -1,27 +1,54 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Pdf from 'react-native-pdf';
+// P2-3: migrated from react-native-pdf to react-native-pdf-jsi (drop-in replacement)
+// Provides onPageSingleTap, searchTextDirect (for post-MVP bounding-rect word lookup),
+// and pdfId for highlight rendering.
+import Pdf from 'react-native-pdf-jsi';
 import { Colors } from '../constants/theme';
 
 interface Props {
   uri: string;
   page: number;
+  /** Unique identifier for this PDF — required by searchTextDirect & highlightRects */
+  pdfId: string;
   onLoadComplete: (totalPages: number) => void;
   onPageChanged: (page: number) => void;
   onError?: (error: Error) => void;
+  /** P2-1: injected by SelectionOverlay via React.cloneElement */
+  onPageSingleTap?: (page: number, x: number, y: number) => void;
 }
 
-export function PdfViewer({ uri, page, onLoadComplete, onPageChanged, onError }: Props) {
+export function PdfViewer({
+  uri,
+  page,
+  pdfId,
+  onLoadComplete,
+  onPageChanged,
+  onError,
+  onPageSingleTap,
+}: Props) {
   const source = { uri, cache: true };
+
+  const handleLoadComplete = useCallback(
+    (numberOfPages: number) => onLoadComplete(numberOfPages),
+    [onLoadComplete]
+  );
+
+  const handlePageChanged = useCallback(
+    (currentPage: number) => onPageChanged(currentPage),
+    [onPageChanged]
+  );
 
   return (
     <View style={styles.container}>
       <Pdf
         source={source}
         page={page}
-        onLoadComplete={(numberOfPages) => onLoadComplete(numberOfPages)}
-        onPageChanged={(currentPage) => onPageChanged(currentPage)}
+        pdfId={pdfId}
+        onLoadComplete={handleLoadComplete}
+        onPageChanged={handlePageChanged}
         onError={(error) => onError?.(error as Error)}
+        onPageSingleTap={onPageSingleTap}
         style={styles.pdf}
         enablePaging
         horizontal={false}

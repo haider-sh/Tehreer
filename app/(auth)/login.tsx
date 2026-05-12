@@ -34,6 +34,7 @@ export default function LoginScreen() {
     try {
       const { access_token, refresh_token, user } = await authService.login(email.trim(), password);
       await login(access_token, refresh_token, user);
+      router.replace('/(app)/(tabs)/library');
     } catch (err: any) {
       const msg = err?.response?.data?.detail ?? 'لاگ ان ناکام ہوا';
       Alert.alert('خطا', msg);

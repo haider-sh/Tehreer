@@ -1,9 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MeaningDrawer from '../../../components/MeaningDrawer';
-import { PdfViewer } from '../../../components/PdfViewer';
+import { PdfWebViewer, WordTapPayload } from '../../../components/PdfWebViewer';
 import SummaryModal from '../../../components/SummaryModal';
 import { Colors, FontSize, Spacing } from '../../../constants/theme';
 import { LocalPdf, localPdfService } from '../../../services/local-pdf.service';
@@ -20,11 +19,11 @@ import { useReaderStore } from '../../../store/reader.store';
 export default function ReaderScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { setDoc, currentPage, totalPages, setPage, setPendingSelection, reset } = useReaderStore();
+  const { setDoc, currentPage, totalPages, setPage, reset } = useReaderStore();
 
   const [pdfMeta, setPdfMeta] = useState<LocalPdf | null>(null);
   const [loading, setLoading] = useState(true);
-  const [pdfError, setPdfError] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [meaningVisible, setMeaningVisible] = useState(false);
   const [selectedText, setSelectedText] = useState('');
@@ -43,12 +42,30 @@ export default function ReaderScreen() {
     return () => reset();
   }, [id]);
 
-  const handleLoadComplete = (pages: number) => {
-    setDoc(id as string, pages);
-    localPdfService.updatePageCount(id as string, pages);
-  };
+  const handleLoadComplete = useCallback(
+    (pages: number) => {
+      setDoc(id as string, pages);
+      localPdfService.updatePageCount(id as string, pages);
+    },
+    [id]
+  );
 
+  const handlePageChanged = useCallback(
+    (page: number) => setPage(page),
+    [setPage]
+  );
 
+  /**
+   * P2-W1 — Word tap from PDF.js text layer.
+   * `word` is the exact tapped text item; `fullPageText` is all text items
+   * joined — sent as context to the meaning API (never equals word alone).
+   */
+  const handleWordTap = useCallback(({ word, fullPageText }: WordTapPayload) => {
+    if (!word) return;
+    setSelectedText(word);
+    setPageContext(fullPageText !== word ? fullPageText : '');
+    setMeaningVisible(true);
+  }, []);
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
@@ -74,7 +91,7 @@ export default function ReaderScreen() {
         </View>
       )}
 
-      {/* PDF Area */}
+      {/* PDF */}
       {loading ? (
         <View style={styles.center}>
           <ActivityIndicator color={Colors.accent} />
@@ -82,19 +99,20 @@ export default function ReaderScreen() {
       ) : pdfError ? (
         <View style={styles.center}>
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
-          <Text style={styles.errorText}>Could not load PDF</Text>
+          <Text style={styles.errorText}>{pdfError}</Text>
         </View>
       ) : pdfMeta ? (
-        <PdfViewer
+        <PdfWebViewer
           uri={pdfMeta.localPath}
           page={jumpToPage}
           onLoadComplete={handleLoadComplete}
-          onPageChanged={(p) => setPage(p)}
-          onError={() => setPdfError(true)}
+          onPageChanged={handlePageChanged}
+          onWordTap={handleWordTap}
+          onError={(msg) => setPdfError(msg)}
         />
       ) : null}
 
-      {/* Page Navigation */}
+      {/* Page navigation */}
       <View style={styles.navBar}>
         <TouchableOpacity
           style={[styles.navBtn, currentPage <= 1 && styles.navBtnDisabled]}
@@ -115,7 +133,10 @@ export default function ReaderScreen() {
         <Text style={styles.pageLabel}>Page {currentPage}</Text>
 
         <TouchableOpacity
-          style={[styles.navBtn, (currentPage >= totalPages || totalPages === 0) && styles.navBtnDisabled]}
+          style={[
+            styles.navBtn,
+            (currentPage >= totalPages || totalPages === 0) && styles.navBtnDisabled,
+          ]}
           onPress={() => {
             const next = currentPage + 1;
             setPage(next);
@@ -126,7 +147,11 @@ export default function ReaderScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color={currentPage >= totalPages || totalPages === 0 ? Colors.textMuted : Colors.textPrimary}
+            color={
+              currentPage >= totalPages || totalPages === 0
+                ? Colors.textMuted
+                : Colors.textPrimary
+            }
           />
         </TouchableOpacity>
       </View>
@@ -135,7 +160,7 @@ export default function ReaderScreen() {
       <MeaningDrawer
         visible={meaningVisible}
         selectedText={selectedText}
-        context={pageContext || selectedText}  // real context from SelectionOverlay (Phase 2)
+        context={pageContext}
         localPdfPath={pdfMeta?.localPath ?? ''}
         page={currentPage}
         onClose={() => {
@@ -184,7 +209,12 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   pageText: { fontSize: FontSize.xs, color: Colors.textSecondary },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+  },
   errorText: { fontSize: FontSize.md, color: Colors.error, fontWeight: '500' },
   navBar: {
     flexDirection: 'row',
